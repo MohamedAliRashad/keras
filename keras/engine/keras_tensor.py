@@ -242,14 +242,16 @@ class KerasTensor:
 
   def __array__(self):
     raise TypeError(
-        'Cannot convert a symbolic Keras input/output to a numpy array. '
-        'This error may indicate that you\'re trying to pass a symbolic value '
-        'to a NumPy call, which is not supported. Or, '
-        'you may be trying to pass Keras symbolic inputs/outputs '
-        'to a TF API that does not register dispatching, '
-        'preventing Keras from automatically '
-        'converting the API call to a lambda layer '
-        'in the Functional Model.')
+        f'You are passing {self}, an intermediate Keras symbolic input/output, '
+        'to a TF API that does not register dispatching, such as `tf.function, '
+        '`tf.cond`, or `tf.map_fn`. '
+        'Keras Functional model construction only supports '
+        'TF API calls that *do* support dispatching. '
+        'Other APIs cannot be called directly on symbolic Keras'
+        'inputs/outputs. You can work around '
+        'this limitation by putting the operation in a custom Keras layer '
+        '`call` or in a `tf.keras.layers.Lambda` layer, then call that layer '
+        'on this symbolic input/output.')
 
   @property
   def is_tensor_like(self):
